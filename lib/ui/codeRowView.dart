@@ -75,8 +75,28 @@ class CordRowView extends StatelessWidget {
                   onPrimary: Colors.white,
                 ),
                 onPressed: () {
-                  repo.deleteCodeById(userState.user, code.id!);
-                  codeModels.reload();
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: Text('警告'),
+                        content: Text('データを削除しますか'),
+                        actions: <Widget>[
+                          ElevatedButton(
+                            child: Text("キャンセル"),
+                            onPressed: () => Navigator.pop(context),
+                          ),
+                          ElevatedButton(
+                              child: Text("OK"),
+                              onPressed: () {
+                                repo.deleteCodeById(userState.user, code.id!);
+                                codeModels.reload();
+                                Navigator.pop(context);
+                              }),
+                        ],
+                      );
+                    },
+                  );
                 },
               ),
             ],
