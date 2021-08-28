@@ -4,7 +4,7 @@ import 'package:stockcodes/Repository/code_repository.dart';
 import 'package:stockcodes/entity/code.dart';
 import 'package:stockcodes/model/code_model.dart';
 import 'package:stockcodes/ui/codeDetailView.dart';
-import 'package:stockcodes/ui/codeRegistUpdate.dart';
+import 'package:stockcodes/ui/codeDetailView.dart';
 
 import '../main.dart';
 
@@ -41,11 +41,13 @@ class CordRowView extends StatelessWidget {
               title: Text(this.title),
               subtitle: Text(this.overview),
               onTap: () async {
-                showDialog(
-                    context: context,
-                    builder: (context) {
-                      return CordDetailView(code);
-                    });
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    fullscreenDialog: true,
+                    builder: (BuildContext context) =>
+                        CordDetailView(code, false),
+                  ),
+                );
               }),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
@@ -60,7 +62,8 @@ class CordRowView extends StatelessWidget {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       fullscreenDialog: true,
-                      builder: (BuildContext context) => CodeRegistUpdate(code),
+                      builder: (BuildContext context) =>
+                          CordDetailView(code, true),
                     ),
                   );
                 },
