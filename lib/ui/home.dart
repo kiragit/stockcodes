@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:stockcodes/entity/code.dart';
 import 'package:stockcodes/model/code_model.dart';
-import 'package:stockcodes/ui/codeRegistration.dart';
-import 'package:stockcodes/ui/codeListView.dart';
+import 'package:stockcodes/ui/codeRegistUpdate.dart';
+import 'package:stockcodes/ui/codeRowView.dart';
 import '../main.dart';
 import 'package:provider/provider.dart';
 
@@ -24,7 +24,7 @@ class Home extends StatelessWidget {
       body: ListView.builder(
         itemCount: codes.length,
         itemBuilder: (BuildContext context, int index) {
-          return CordListView(codes[index]);
+          return CordRowView(codes[index]);
         },
       ),
       floatingActionButton: FloatingActionButton(
@@ -37,7 +37,7 @@ class Home extends StatelessWidget {
             Navigator.of(context).push(
               MaterialPageRoute(
                 fullscreenDialog: true,
-                builder: (BuildContext context) => CodeRegistration(),
+                builder: (BuildContext context) => CodeRegistUpdate(),
               ),
             );
           },

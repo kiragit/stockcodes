@@ -2,18 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:stockcodes/Repository/code_repository.dart';
 import 'package:stockcodes/entity/code.dart';
+import 'package:stockcodes/model/code_model.dart';
 import 'package:stockcodes/ui/codeDetailView.dart';
+import 'package:stockcodes/ui/codeRegistUpdate.dart';
 
 import '../main.dart';
 
-class CordListView extends StatelessWidget {
+class CordRowView extends StatelessWidget {
   late Code code;
   late String title;
   late String overview;
   late IconData private;
   final CodeRepository repo = CodeRepository();
 
-  CordListView(this.code) {
+  CordRowView(this.code) {
     this.title = (this.code.title == null ? "No title" : code.title)!;
     this.overview =
         (this.code.overview == null ? "No overview" : code.overview)!;
@@ -28,6 +30,7 @@ class CordListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final UserState userState = Provider.of<UserState>(context);
+    final CodeModel codeModels = Provider.of<CodeModel>(context);
 
     return Card(
       child: Column(
@@ -53,7 +56,14 @@ class CordListView extends StatelessWidget {
                   primary: Colors.blue,
                   onPrimary: Colors.white,
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      fullscreenDialog: true,
+                      builder: (BuildContext context) => CodeRegistUpdate(code),
+                    ),
+                  );
+                },
               ),
               ElevatedButton(
                 child: const Text('削除'),
@@ -63,6 +73,7 @@ class CordListView extends StatelessWidget {
                 ),
                 onPressed: () {
                   repo.deleteCodeById(userState.user, code.id!);
+                  codeModels.reload();
                 },
               ),
             ],

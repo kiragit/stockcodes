@@ -8,12 +8,20 @@ import 'package:stockcodes/ui/home.dart';
 
 import '../main.dart';
 
-class CodeRegistration extends StatelessWidget {
-  CodeRegistration();
+class CodeRegistUpdate extends StatelessWidget {
+  Code? code;
+
+  late String buttonText;
+  late String? id;
+  CodeRegistUpdate([code]) {
+    this.code = code;
+  }
 
   @override
   Widget build(BuildContext context) {
     final UserState userState = Provider.of<UserState>(context);
+    final CodeModel codeModels = Provider.of<CodeModel>(context);
+
     final User user = userState.user!;
     final CodeModel codeModel = CodeModel(user);
     final titleController = TextEditingController();
@@ -21,8 +29,20 @@ class CodeRegistration extends StatelessWidget {
     final codeController = TextEditingController();
     final tagsController = TextEditingController();
     final categoriesController = TextEditingController();
-    final Controller = TextEditingController();
-
+    if (code == null) {
+      //新規登録の場合
+      buttonText = "登録";
+      id = null;
+    } else {
+      //更新の場合
+      buttonText = "更新";
+      id = code!.id;
+      titleController.text = code!.title ?? "";
+      overviewController.text = code!.overview ?? "";
+      codeController.text = code!.code ?? "";
+      tagsController.text = code!.tags!.join(",");
+      categoriesController.text = code!.categories!.join(",");
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text('Stock Codes'),
@@ -117,7 +137,7 @@ class CodeRegistration extends StatelessWidget {
             // height: 100.0,
             child: ElevatedButton(
                 child: Text(
-                  '登録する',
+                  buttonText,
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 style: ElevatedButton.styleFrom(
@@ -128,8 +148,8 @@ class CodeRegistration extends StatelessWidget {
                 onPressed: () {
                   try {
                     DateTime _now = DateTime.now();
-                    Code code = new Code.fromDatabaseJson({
-                      'id': null,
+                    code = new Code.fromDatabaseJson({
+                      'id': id,
                       'title': titleController.text,
                       'overview': overviewController.text,
                       'code': codeController.text,
@@ -140,7 +160,14 @@ class CodeRegistration extends StatelessWidget {
                       'createat': _now,
                       'fromCopiedID': ""
                     });
-                    codeModel.add(code);
+
+                    if (id == null) {
+                      codeModel.add(code!);
+                    } else {
+                      codeModel.update(code!, id!);
+                    }
+
+                    codeModels.reload();
                   } catch (e) {
                     print(e.toString());
                   }

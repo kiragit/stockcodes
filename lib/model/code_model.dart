@@ -10,6 +10,10 @@ class CodeModel with ChangeNotifier {
 
   List<Code> get allCodeList => _allCodeList;
 
+  void reload() {
+    _fetchAll();
+  }
+
   final CodeRepository repo = CodeRepository();
 
   CodeModel(this.user) {
@@ -23,6 +27,11 @@ class CodeModel with ChangeNotifier {
 
   void add(Code code) async {
     await repo.insertCode(user, code);
+    _fetchAll();
+  }
+
+  void update(Code code, String id) async {
+    await repo.updateCode(user, id, code);
     _fetchAll();
   }
 }
