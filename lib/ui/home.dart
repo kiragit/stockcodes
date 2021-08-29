@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:stockcodes/entity/code.dart';
-import 'package:stockcodes/model/code_model.dart';
+import 'package:stockcodes/model/codesModel.dart';
 import 'package:stockcodes/ui/codeDetailView.dart';
 import 'package:stockcodes/ui/codeRowView.dart';
 import '../main.dart';
@@ -14,7 +14,7 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     // ユーザー情報を受け取る
     final UserState userState = Provider.of<UserState>(context);
-    final CodeModel codeModel = Provider.of<CodeModel>(context);
+    final CodesModel codeModel = Provider.of<CodesModel>(context);
     List<Code> codes = codeModel.allCodeList;
 
     return Scaffold(
@@ -35,11 +35,17 @@ class Home extends StatelessWidget {
                     title: Text("リストの並び替え"),
                     children: [
                       SimpleDialogOption(
-                        onPressed: () => codeModel.sortByTitle(),
+                        onPressed: () {
+                          codeModel.sortByTitle();
+                          Navigator.pop(context, 1);
+                        },
                         child: Text("タイトル"),
                       ),
                       SimpleDialogOption(
-                        onPressed: () => codeModel.sortByCreateat(),
+                        onPressed: () {
+                          codeModel.sortByCreateat();
+                          Navigator.pop(context, 1);
+                        },
                         child: Text("作成日"),
                       ),
                     ],

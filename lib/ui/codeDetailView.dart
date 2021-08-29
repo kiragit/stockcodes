@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:stockcodes/entity/code.dart';
-import 'package:stockcodes/model/code_model.dart';
-import 'package:stockcodes/ui/home.dart';
+import 'package:stockcodes/model/codeModel.dart';
+import 'package:stockcodes/model/codesModel.dart';
+import 'package:stockcodes/ui/tagChips.dart';
 
 import '../main.dart';
 
@@ -18,7 +19,8 @@ class CordDetailView extends StatelessWidget {
   final titleController = TextEditingController();
   final overviewController = TextEditingController();
   final codeController = TextEditingController();
-  final tagsController = TextEditingController();
+  //final tagsController = TextEditingController();
+  late TagChips tagChips;
   final categoriesController = TextEditingController();
 
   // This key will be used to show the snack bar
@@ -27,6 +29,7 @@ class CordDetailView extends StatelessWidget {
   CordDetailView(code, editflag) {
     this.code = code;
     this.editflag = editflag;
+    this.tagChips = TagChips(this.code!.tags, editflag);
   }
 
   // This function is triggered when the copy icon is pressed
@@ -43,10 +46,8 @@ class CordDetailView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final UserState userState = Provider.of<UserState>(context);
-    final CodeModel codeModels = Provider.of<CodeModel>(context);
-
-    final User user = userState.user!;
-    final CodeModel codeModel = CodeModel(user);
+    final CodesModel codesModel = Provider.of<CodesModel>(context);
+    final CodeModel codeModel = Provider.of<CodeModel>(context);
 
     if (code == null) {
       //新規登録の場合
@@ -67,7 +68,7 @@ class CordDetailView extends StatelessWidget {
       titleController.text = code!.title ?? "";
       overviewController.text = code!.overview ?? "";
       codeController.text = code!.code ?? "";
-      tagsController.text = code!.tags!.join(",");
+      //tagsController.text = code!.tags!.join(",");
       categoriesController.text = code!.categories!.join(",");
     }
     return Scaffold(
@@ -144,10 +145,7 @@ class CordDetailView extends StatelessWidget {
                             color: Colors.white,
                             child: Padding(
                               padding: EdgeInsets.all(8.0),
-                              child: TextFormField(
-                                enabled: editflag,
-                                controller: tagsController,
-                              ),
+                              child: tagChips,
                             )),
                         SizedBox(height: 20),
                         Text("カテゴリ"),
@@ -193,7 +191,7 @@ class CordDetailView extends StatelessWidget {
                       'title': titleController.text,
                       'overview': overviewController.text,
                       'code': codeController.text,
-                      'tags': [tagsController.text],
+                      'tags': tagChips.tags,
                       'categories': [categoriesController.text],
                       'likes': 0,
                       'private': false,
@@ -201,23 +199,28 @@ class CordDetailView extends StatelessWidget {
                       'fromCopiedID': ""
                     });
 
+                    //更新モードの場合
                     if (editflag) {
                       if (id == null) {
-                        codeModel.add(code!);
+                        codesModel.add(code!);
                       } else {
-                        codeModel.update(code!, id!);
+                        codesModel.update(code!, id!);
                       }
 
-                      codeModels.reload();
+                      codesModel.reload();
 
                       Navigator.popUntil(context, (route) => route.isFirst);
+                      //参照モードの場合
                     } else {
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          fullscreenDialog: true,
-                          builder: (BuildContext context) =>
-                              CordDetailView(code, true),
-                        ),
+                            fullscreenDialog: true,
+                            builder: (context) {
+                              return ChangeNotifierProvider<CodeModel>(
+                                create: (context) => CodeModel(code!),
+                                child: CordDetailView(code, true),
+                              );
+                            }),
                       );
                     }
                   } catch (e) {

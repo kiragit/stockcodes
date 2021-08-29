@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:stockcodes/Repository/code_repository.dart';
 import 'package:stockcodes/entity/code.dart';
-import 'package:stockcodes/model/code_model.dart';
+import 'package:stockcodes/model/codeModel.dart';
+import 'package:stockcodes/model/codesModel.dart';
 import 'package:stockcodes/ui/codeDetailView.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -40,7 +41,7 @@ class CordRowView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final UserState userState = Provider.of<UserState>(context);
-    final CodeModel codeModels = Provider.of<CodeModel>(context);
+    final CodesModel codeModels = Provider.of<CodesModel>(context);
 
     return Card(
       child: Column(
@@ -49,14 +50,17 @@ class CordRowView extends StatelessWidget {
           ListTile(
               leading: Icon(this.private),
               title: Text(this.title),
-              subtitle: Text(this.createat_jp + ":　" + this.overview),
+              subtitle: Text(this.createat_jp + "　" + this.overview),
               onTap: () async {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    fullscreenDialog: true,
-                    builder: (BuildContext context) =>
-                        CordDetailView(code, false),
-                  ),
+                      fullscreenDialog: true,
+                      builder: (context) {
+                        return ChangeNotifierProvider<CodeModel>(
+                          create: (context) => CodeModel(code),
+                          child: CordDetailView(code, false),
+                        );
+                      }),
                 );
               }),
           Row(
@@ -71,10 +75,13 @@ class CordRowView extends StatelessWidget {
                 onPressed: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      fullscreenDialog: true,
-                      builder: (BuildContext context) =>
-                          CordDetailView(code, true),
-                    ),
+                        fullscreenDialog: true,
+                        builder: (context) {
+                          return ChangeNotifierProvider<CodeModel>(
+                            create: (context) => CodeModel(code),
+                            child: CordDetailView(code, true),
+                          );
+                        }),
                   );
                 },
               ),

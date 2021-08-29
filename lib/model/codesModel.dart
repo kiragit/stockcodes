@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:stockcodes/Repository/code_repository.dart';
 import 'package:stockcodes/entity/code.dart';
 
-class CodeModel with ChangeNotifier {
+class CodesModel with ChangeNotifier {
   User user;
 
   List<Code> _allCodeList = [];
@@ -26,7 +26,7 @@ class CodeModel with ChangeNotifier {
 
   final CodeRepository repo = CodeRepository();
 
-  CodeModel(this.user) {
+  CodesModel(this.user) {
     _fetchAll();
   }
 

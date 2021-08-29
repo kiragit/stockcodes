@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
-import 'package:stockcodes/model/code_model.dart';
+import 'package:stockcodes/model/codesModel.dart';
 import '../service/authentication_error.dart';
 import 'registration.dart';
 import 'home.dart';
@@ -97,8 +97,8 @@ class _LoginPage extends State<Login> {
                       userState.setUser(result.user!);
                       await Navigator.of(context).pushReplacement(
                         MaterialPageRoute(builder: (context) {
-                          return ChangeNotifierProvider<CodeModel>(
-                            create: (context) => CodeModel(result.user!),
+                          return ChangeNotifierProvider<CodesModel>(
+                            create: (context) => CodesModel(result.user!),
                             child: MaterialApp(
                               title: 'StockCodes',
                               theme: ThemeData(
