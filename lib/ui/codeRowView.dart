@@ -4,7 +4,8 @@ import 'package:stockcodes/Repository/code_repository.dart';
 import 'package:stockcodes/entity/code.dart';
 import 'package:stockcodes/model/code_model.dart';
 import 'package:stockcodes/ui/codeDetailView.dart';
-import 'package:stockcodes/ui/codeDetailView.dart';
+import 'package:intl/intl.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 import '../main.dart';
 
@@ -13,12 +14,21 @@ class CordRowView extends StatelessWidget {
   late String title;
   late String overview;
   late IconData private;
+  late DateTime createat;
+  late String createat_jp;
+
   final CodeRepository repo = CodeRepository();
 
   CordRowView(this.code) {
+    initializeDateFormatting("ja");
+    DateFormat formatter = new DateFormat.yMMMd('ja').add_Hms();
+
     this.title = (this.code.title == null ? "No title" : code.title)!;
     this.overview =
         (this.code.overview == null ? "No overview" : code.overview)!;
+    this.createat =
+        (this.code.createat == null ? DateTime.now() : code.createat)!;
+    this.createat_jp = formatter.format(this.createat);
     if (this.code.private == null) {
       this.private = Icons.public;
     } else {
@@ -39,7 +49,7 @@ class CordRowView extends StatelessWidget {
           ListTile(
               leading: Icon(this.private),
               title: Text(this.title),
-              subtitle: Text(this.overview),
+              subtitle: Text(this.createat_jp + ":　" + this.overview),
               onTap: () async {
                 Navigator.of(context).push(
                   MaterialPageRoute(

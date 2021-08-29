@@ -20,6 +20,35 @@ class Home extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Stock Codes'),
+        centerTitle: true,
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(
+              Icons.sort,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return SimpleDialog(
+                    title: Text("リストの並び替え"),
+                    children: [
+                      SimpleDialogOption(
+                        onPressed: () => codeModel.sortByTitle(),
+                        child: Text("タイトル"),
+                      ),
+                      SimpleDialogOption(
+                        onPressed: () => codeModel.sortByCreateat(),
+                        child: Text("作成日"),
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+          ),
+        ],
       ),
       body: ListView.builder(
         itemCount: codes.length,

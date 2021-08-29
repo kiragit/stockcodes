@@ -14,6 +14,16 @@ class CodeModel with ChangeNotifier {
     _fetchAll();
   }
 
+  void sortByTitle() {
+    _allCodeList.sort((a, b) => a.title!.compareTo(b.title!));
+    notifyListeners();
+  }
+
+  void sortByCreateat() {
+    _allCodeList.sort((a, b) => a.createat!.compareTo(b.createat!));
+    notifyListeners();
+  }
+
   final CodeRepository repo = CodeRepository();
 
   CodeModel(this.user) {

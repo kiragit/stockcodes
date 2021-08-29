@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:stockcodes/entity/code.dart';
 import 'package:stockcodes/model/code_model.dart';
@@ -14,9 +15,29 @@ class CordDetailView extends StatelessWidget {
   late String buttonText;
   late String? id;
   late bool editflag;
+  final titleController = TextEditingController();
+  final overviewController = TextEditingController();
+  final codeController = TextEditingController();
+  final tagsController = TextEditingController();
+  final categoriesController = TextEditingController();
+
+  // This key will be used to show the snack bar
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
+
   CordDetailView(code, editflag) {
     this.code = code;
     this.editflag = editflag;
+  }
+
+  // This function is triggered when the copy icon is pressed
+  Future<void> _copyToClipboard(context) async {
+    await Clipboard.setData(ClipboardData(text: codeController.text));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text("コピーしました"),
+        duration: const Duration(seconds: 2),
+      ),
+    );
   }
 
   @override
@@ -26,11 +47,7 @@ class CordDetailView extends StatelessWidget {
 
     final User user = userState.user!;
     final CodeModel codeModel = CodeModel(user);
-    final titleController = TextEditingController();
-    final overviewController = TextEditingController();
-    final codeController = TextEditingController();
-    final tagsController = TextEditingController();
-    final categoriesController = TextEditingController();
+
     if (code == null) {
       //新規登録の場合
       buttonText = "登録";
@@ -107,10 +124,18 @@ class CordDetailView extends StatelessWidget {
                             child: Padding(
                               padding: EdgeInsets.all(8.0),
                               child: TextFormField(
-                                enabled: editflag,
+                                readOnly: !editflag,
                                 controller: codeController,
                                 keyboardType: TextInputType.multiline,
                                 maxLines: null,
+                                decoration: InputDecoration(
+                                  suffixIcon: IconButton(
+                                    icon: Icon(Icons.copy),
+                                    onPressed: () {
+                                      _copyToClipboard(context);
+                                    },
+                                  ),
+                                ),
                               ),
                             )),
                         SizedBox(height: 20),
