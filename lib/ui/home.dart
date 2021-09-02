@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:stockcodes/entity/code.dart';
+import 'package:stockcodes/model/codeModel.dart';
 import 'package:stockcodes/model/codesModel.dart';
 import 'package:stockcodes/ui/codeDetailView.dart';
 import 'package:stockcodes/ui/codeRowView.dart';
@@ -71,9 +72,13 @@ class Home extends StatelessWidget {
           onPressed: () {
             Navigator.of(context).push(
               MaterialPageRoute(
-                fullscreenDialog: true,
-                builder: (BuildContext context) => CordDetailView(null, true),
-              ),
+                  fullscreenDialog: true,
+                  builder: (context) {
+                    return ChangeNotifierProvider<CodeModel>(
+                      create: (context) => CodeModel(new Code()),
+                      child: CordDetailView(new Code(), true),
+                    );
+                  }),
             );
           },
         ),

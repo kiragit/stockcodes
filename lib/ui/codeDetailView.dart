@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:stockcodes/entity/code.dart';
 import 'package:stockcodes/model/codeModel.dart';
 import 'package:stockcodes/model/codesModel.dart';
+import 'package:stockcodes/ui/codeEditor.dart';
 import 'package:stockcodes/ui/tagChips.dart';
 
 import '../main.dart';
@@ -29,7 +32,11 @@ class CordDetailView extends StatelessWidget {
   CordDetailView(code, editflag) {
     this.code = code;
     this.editflag = editflag;
-    this.tagChips = TagChips(this.code!.tags, editflag);
+    if (code.tags != null) {
+      this.tagChips = TagChips(this.code!.tags, editflag);
+    } else {
+      this.tagChips = TagChips([], editflag);
+    }
   }
 
   // This function is triggered when the copy icon is pressed
@@ -48,12 +55,14 @@ class CordDetailView extends StatelessWidget {
     final UserState userState = Provider.of<UserState>(context);
     final CodesModel codesModel = Provider.of<CodesModel>(context);
     final CodeModel codeModel = Provider.of<CodeModel>(context);
+    final CodeEditor codeEditor;
 
-    if (code == null) {
+    if (code!.id == null) {
       //新規登録の場合
       buttonText = "登録";
       editflag = true; //更新可能
       id = null;
+      codeEditor = new CodeEditor("");
     } else {
       if (editflag) {
         //更新の場合
@@ -69,6 +78,7 @@ class CordDetailView extends StatelessWidget {
       overviewController.text = code!.overview ?? "";
       codeController.text = code!.code ?? "";
       //tagsController.text = code!.tags!.join(",");
+      codeEditor = new CodeEditor(code!.code);
       categoriesController.text = code!.categories!.join(",");
     }
     return Scaffold(
@@ -124,6 +134,8 @@ class CordDetailView extends StatelessWidget {
                             color: Colors.white,
                             child: Padding(
                               padding: EdgeInsets.all(8.0),
+                              child: codeEditor,
+                              /*
                               child: TextFormField(
                                 readOnly: !editflag,
                                 controller: codeController,
@@ -138,6 +150,7 @@ class CordDetailView extends StatelessWidget {
                                   ),
                                 ),
                               ),
+                              */
                             )),
                         SizedBox(height: 20),
                         Text("タグ"),
@@ -190,7 +203,7 @@ class CordDetailView extends StatelessWidget {
                       'id': id,
                       'title': titleController.text,
                       'overview': overviewController.text,
-                      'code': codeController.text,
+                      'code': codeEditor.getSource(),
                       'tags': tagChips.tags,
                       'categories': [categoriesController.text],
                       'likes': 0,
