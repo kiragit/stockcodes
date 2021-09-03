@@ -6,9 +6,11 @@ import 'package:flutter_highlight/themes/monokai-sublime.dart';
 
 class CodeEditor extends StatefulWidget {
   String source = "";
+  late bool editflag;
   CodeController? _codeController;
 
-  CodeEditor(String? source) {
+  CodeEditor(String? source, bool editflag) {
+    this.editflag = !editflag;
     if (source != null) {
       this.source = source;
     } else {
@@ -24,7 +26,7 @@ class CodeEditor extends StatefulWidget {
   }
 
   @override
-  _CodeEditorState createState() => _CodeEditorState(_codeController);
+  _CodeEditorState createState() => _CodeEditorState(_codeController, editflag);
 
   getSource() {
     return _codeController!.text;
@@ -34,8 +36,11 @@ class CodeEditor extends StatefulWidget {
 class _CodeEditorState extends State<CodeEditor> {
   CodeController? _codeController;
 
-  _CodeEditorState(CodeController? codeController) {
+  bool? _editflag;
+
+  _CodeEditorState(CodeController? codeController, bool editflag) {
     this._codeController = codeController;
+    this._editflag = editflag;
   }
 
   @override
@@ -51,9 +56,11 @@ class _CodeEditorState extends State<CodeEditor> {
 
   @override
   Widget build(BuildContext context) {
-    return CodeField(
-      controller: _codeController!,
-      textStyle: TextStyle(fontFamily: 'SourceCode'),
-    );
+    return AbsorbPointer(
+        absorbing: _editflag!,
+        child: CodeField(
+          controller: _codeController!,
+          textStyle: TextStyle(fontFamily: 'SourceCode'),
+        ));
   }
 }

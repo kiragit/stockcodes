@@ -62,7 +62,7 @@ class CordDetailView extends StatelessWidget {
       buttonText = "登録";
       editflag = true; //更新可能
       id = null;
-      codeEditor = new CodeEditor("");
+      codeEditor = new CodeEditor("", editflag);
     } else {
       if (editflag) {
         //更新の場合
@@ -78,7 +78,7 @@ class CordDetailView extends StatelessWidget {
       overviewController.text = code!.overview ?? "";
       codeController.text = code!.code ?? "";
       //tagsController.text = code!.tags!.join(",");
-      codeEditor = new CodeEditor(code!.code);
+      codeEditor = new CodeEditor(code!.code, editflag);
       categoriesController.text = code!.categories!.join(",");
     }
     return Scaffold(
@@ -135,6 +135,7 @@ class CordDetailView extends StatelessWidget {
                             child: Padding(
                               padding: EdgeInsets.all(8.0),
                               child: codeEditor,
+
                               /*
                               child: TextFormField(
                                 readOnly: !editflag,

@@ -43,26 +43,27 @@ class CordRowView extends StatelessWidget {
     final UserState userState = Provider.of<UserState>(context);
     final CodesModel codeModels = Provider.of<CodesModel>(context);
 
-    return Card(
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
+    return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, // これで両端に寄せる
         children: <Widget>[
-          ListTile(
-              leading: Icon(this.private),
-              title: Text(this.title),
-              subtitle: Text(this.createat_jp + "　" + this.overview),
-              onTap: () async {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                      fullscreenDialog: true,
-                      builder: (context) {
-                        return ChangeNotifierProvider<CodeModel>(
-                          create: (context) => CodeModel(code),
-                          child: CordDetailView(code, false),
-                        );
-                      }),
-                );
-              }),
+          Container(
+              child: Expanded(
+            child: ListTile(
+                leading: Icon(this.private),
+                title: Text(this.title),
+                subtitle: Text(this.createat_jp + "　" + this.overview),
+                onTap: () async {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                        fullscreenDialog: true,
+                        builder: (context) {
+                          return ChangeNotifierProvider<CodeModel>(
+                            create: (context) => CodeModel(code),
+                            child: CordDetailView(code, false),
+                          );
+                        }),
+                  );
+                }),
+          )),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
@@ -118,8 +119,6 @@ class CordRowView extends StatelessWidget {
               ),
             ],
           )
-        ],
-      ),
-    );
+        ]);
   }
 }
