@@ -68,7 +68,6 @@ class TagChips extends StatelessWidget {
         children: <Widget>[
           TextField(
             focusNode: _textFieldFocusNode,
-            autofocus: true,
             enabled: _editflag,
             controller: _inputController,
             decoration: InputDecoration(
