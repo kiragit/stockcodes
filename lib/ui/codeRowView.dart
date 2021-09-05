@@ -7,6 +7,7 @@ import 'package:stockcodes/model/codesModel.dart';
 import 'package:stockcodes/ui/codeDetailView.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:stockcodes/service/StringUtil.dart';
 
 import '../main.dart';
 
@@ -50,7 +51,11 @@ class CordRowView extends StatelessWidget {
             child: ListTile(
                 leading: Icon(this.private),
                 title: Text(this.title),
-                subtitle: Text(this.createat_jp + "　" + this.overview),
+                subtitle: Text(this.createat_jp +
+                    "　" +
+                    StringUtil.substringLt(
+                        StringUtil.parseHtmlString(this.overview), 50)),
+                //概要はhtmlをtext変換して50文字に
                 onTap: () async {
                   Navigator.of(context).push(
                     MaterialPageRoute(

@@ -1,15 +1,16 @@
-import 'dart:html';
+import 'dart:convert';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_quill/flutter_quill.dart' as quill;
 import 'package:provider/provider.dart';
 import 'package:stockcodes/entity/code.dart';
 import 'package:stockcodes/model/codeModel.dart';
 import 'package:stockcodes/model/codesModel.dart';
 import 'package:stockcodes/ui/codeEditor.dart';
 import 'package:stockcodes/ui/tagChips.dart';
+import 'package:stockcodes/ui/overviewEditor.dart';
 
 import '../main.dart';
 
@@ -19,8 +20,9 @@ class CordDetailView extends StatelessWidget {
   late String buttonText;
   late String? id;
   late bool editflag;
-  final titleController = TextEditingController();
-  final overviewController = TextEditingController();
+  String _overview = '';
+  late final titleController = TextEditingController();
+  late OverviewEditor overViewEditor;
   final codeController = TextEditingController();
   //final tagsController = TextEditingController();
   late TagChips tagChips;
@@ -32,11 +34,24 @@ class CordDetailView extends StatelessWidget {
   CordDetailView(code, editflag) {
     this.code = code;
     this.editflag = editflag;
+
+    //タグ
     if (code.tags != null) {
       this.tagChips = TagChips(this.code!.tags, editflag);
     } else {
       this.tagChips = TagChips([], editflag);
     }
+
+    //概要
+    if (code.overview != null) {
+      this._overview = code.overview;
+    }
+    overViewEditor = OverviewEditor(
+      editflag: editflag,
+      overview: this._overview,
+      title: '',
+    );
+    //overViewEditor = OverviewEditor();
   }
 
   // This function is triggered when the copy icon is pressed
@@ -75,8 +90,7 @@ class CordDetailView extends StatelessWidget {
       }
       id = code!.id;
       titleController.text = code!.title ?? "";
-      overviewController.text = code!.overview ?? "";
-      codeController.text = code!.code ?? "";
+      //codeController.text = code!.code ?? "";
       //tagsController.text = code!.tags!.join(",");
       codeEditor = new CodeEditor(code!.code, editflag);
       categoriesController.text = code!.categories!.join(",");
@@ -120,14 +134,15 @@ class CordDetailView extends StatelessWidget {
                         Card(
                             color: Colors.white,
                             child: Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: TextFormField(
+                                padding: EdgeInsets.all(8.0),
+                                child: overViewEditor
+                                /*TextFormField(
                                 enabled: editflag,
                                 controller: overviewController,
                                 keyboardType: TextInputType.multiline,
                                 maxLines: null,
-                              ),
-                            )),
+                              ),*/
+                                )),
                         SizedBox(height: 20),
                         Text('コード'),
                         Card(
@@ -135,23 +150,6 @@ class CordDetailView extends StatelessWidget {
                             child: Padding(
                               padding: EdgeInsets.all(8.0),
                               child: codeEditor,
-
-                              /*
-                              child: TextFormField(
-                                readOnly: !editflag,
-                                controller: codeController,
-                                keyboardType: TextInputType.multiline,
-                                maxLines: null,
-                                decoration: InputDecoration(
-                                  suffixIcon: IconButton(
-                                    icon: Icon(Icons.copy),
-                                    onPressed: () {
-                                      _copyToClipboard(context);
-                                    },
-                                  ),
-                                ),
-                              ),
-                              */
                             )),
                         SizedBox(height: 20),
                         Text("タグ"),
@@ -197,13 +195,14 @@ class CordDetailView extends StatelessWidget {
                   onPrimary: Colors.blue[50],
                 ),
                 // ボタンクリック後にデータを登録して、一覧画面へ戻る。
-                onPressed: () {
+                onPressed: () async {
                   try {
                     DateTime _now = DateTime.now();
+
                     code = new Code.fromDatabaseJson({
                       'id': id,
                       'title': titleController.text,
-                      'overview': overviewController.text,
+                      'overview': await overViewEditor.getText(),
                       'code': codeEditor.getSource(),
                       'tags': tagChips.tags,
                       'categories': [categoriesController.text],
