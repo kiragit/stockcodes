@@ -24,6 +24,14 @@ class Home extends StatelessWidget {
         centerTitle: true,
         actions: <Widget>[
           IconButton(
+              icon: Icon(
+                Icons.refresh,
+                color: Colors.white,
+              ),
+              onPressed: () {
+                codeModel.reload();
+              }),
+          IconButton(
             icon: Icon(
               Icons.sort,
               color: Colors.white,
