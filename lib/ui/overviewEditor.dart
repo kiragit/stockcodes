@@ -54,8 +54,8 @@ class _OverviewEditorState extends State<OverviewEditor> {
         htmlEditorOptions: HtmlEditorOptions(
           hint: "Your text here...",
           initialText: this._overview,
-          autoAdjustHeight: true,
-          adjustHeightForKeyboard: true,
+          autoAdjustHeight: false,
+          adjustHeightForKeyboard: false,
         ),
         otherOptions: OtherOptions(),
       );
